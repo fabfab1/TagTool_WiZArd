@@ -1,0 +1,1 @@
+Here you can put the HTML output of pandoc that is giving errors or problems. If you rename it to problem_file.html then you can debug right away, otherwise you need to change the launch.json file (if using VS Code).
