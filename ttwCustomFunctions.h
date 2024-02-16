@@ -28,6 +28,15 @@ void apply_citation_style_hyphens(vector<string> &articleFile, struct documentSe
 	//find citations like 1993, 3-46 oder 2006b, 300-201... (only in the footnote section)
 	
 	for(size_t i=documentSections.lineNrFootnotesBegin_; i<articleFile.size(); i++){
+		// TODO: FAB (from CoPilot) The regular expression string currently has an unknown escape sequence warning. 
+		// This is because in C++, backslashes in strings are used to introduce escape sequences. 
+		// If we want to include an actual backslash in the string, we need to escape it by using two backslashes.
+		// In this case, we're trying to use a backslash to escape a special character in a regular expression. 
+		// However, because this is a string literal, the C++ compiler is trying to interpret the backslash as starting an escape sequence.
+		// To fix this, we need to use four backslashes to represent a single backslash in the regular expression. 
+		// So the corrected line of code should be:
+		//            std::regex r1{"[0-9]{4}[a-z]?,\\\\s[0-9]{1,4}[Γ\\-]{1,3}[0-9]{1,4}"};
+		// instead of std::regex r1{"[0-9]{4}[a-z]?,\\s[0-9]{1,4}[Γ\\-]{1,3}[0-9]{1,4}"};
 	std::regex r1{"[0-9]{4}[a-z]?,\\s[0-9]{1,4}[–|\-]{1,3}[0-9]{1,4}"};
 	std::smatch m1;
 	std::sregex_iterator begin{ articleFile[i].begin(), articleFile[i].end(), r1};
