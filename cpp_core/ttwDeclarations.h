@@ -13,6 +13,9 @@ void analyze_articleFile(vector<string>&, vector<tagClass>&, vector<lineClass>&,
 	
 void apply_citation_style_hyphens(vector<string>&, struct documentSectionsClass&);
 
+void check_footnotes_for_manual_paragraph_marks(vector<string> &articleFile, 
+	struct documentSectionsClass &documentSections);
+
 string classify_tag(string, size_t, struct documentSectionsClass&);
 
 void console_print(string consoleMessage);
@@ -41,7 +44,7 @@ void insert_image_credit_list(vector<string> &articleFile, fileInformations&, st
 
 void insert_metadataTemplates(vector<string> &articleFile, fileInformations &fileInfo, struct documentSectionsClass&);
 
-void insert_FootnoteTags(vector<string>&, vector<footNoteClass>&);
+void insert_FootnoteTags(vector<string>&, vector<footNoteClass>&, struct documentSectionsClass &documentSections);
 
 string isolate_plainText(string);
 

@@ -13,11 +13,10 @@
 #include <filesystem>
 
 
-
 using std::cout; using std::cin; using std::vector; using std::string; using std::ifstream; using std::ofstream;
 using std::endl; using std::stringstream;
 
-
+namespace fs = std::filesystem;
 class fileInformations {
 public:
     int lapCounter_;
@@ -31,7 +30,9 @@ public:
     string newFileNameFor_;
     string ttwRootPath_;
     string nameTempDirectory_;
+    string nameProjectDirectory_;
     string pathTempDirectory_;
+    string pathProjectDirectory_;
     
 	string folderWriting_;
 
@@ -75,6 +76,13 @@ public:
   		fileNameCreditList_.insert(0, pathTempDirectory_); 
   		fileNameMetadataList_.insert(0, pathTempDirectory_); 
   		fileNameToSearchAndReplaceList_.insert(0, pathTempDirectory_); 
+	}
+	
+	void set_projectPath(){
+    	fileNameAuthorYearList_.insert(0, pathProjectDirectory_); 
+  		fileNameCreditList_.insert(0, pathProjectDirectory_); 
+  		fileNameMetadataList_.insert(0, pathProjectDirectory_); 
+  		fileNameToSearchAndReplaceList_.insert(0, pathProjectDirectory_); 
 	}
     
 };
@@ -225,7 +233,7 @@ struct documentSectionsClass {
     
     vector<listClass> containerLists;
 
-	void log(vector<string> articleFile){
+	void log(vector<string> articleFile, fileInformations& fileInfos){
 	
 	cout << "\nOutput documentSections.log:" << endl;
 	cout << "detected lineNrAbstractBegin_: " << lineNrAbstractBegin_ << endl;
@@ -247,7 +255,11 @@ struct documentSectionsClass {
 		cout << "\n" << endl;
 	}
 	
-			
+	cout << "\nNow paths and filenames:" << endl;
+	cout << "fileInfos.ttwRootPath_: "<< fileInfos.ttwRootPath_ << endl;
+	cout << "fileInfos.pathProjectDirectory_: " << fileInfos.pathProjectDirectory_ << endl;
+	cout << "fs::current_path(): " << fs::current_path() << endl;
+				
 	}
 
     void clear(){
@@ -608,13 +620,14 @@ string strongEndXML_ = "</bold>";
 
 //Global settings and switches...
 
-string versionNumber = "v1-3-1";
-string versionTag = "v1.3.1";
+string versionNumber = "v2-0-0";
+string versionTag = "v2.0.0";
 
 bool firstRun=true;
 bool nextRunIsSet=true;
 bool htmlSelected=true; //=default setting;
 bool callFromWebSelected=false;
+bool callFromPythonSelected=false;
 bool silentModeSelected=false; 
 
 bool applyCitationStyleDone=false;

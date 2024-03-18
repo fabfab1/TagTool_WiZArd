@@ -118,7 +118,6 @@ void xml_preparation_tagebuecher (vector<string> &articleFile, struct documentSe
 		pos1=articleFile[i].find("[Notizen außerhalb der Textkolumne]");
 		
 		if(pos1>=0){
-			//cout << "Treffer: " << articleFile[i] << endl;
 			articleFile[i].insert(0, "<boxed-text>\n");
 			boxedTextTagOpen=true;
 			lineNrLastOpenTag=i;

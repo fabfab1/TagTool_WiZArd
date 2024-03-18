@@ -173,7 +173,70 @@ void analyze_articleFile(vector<string> &articleFile, vector<tagClass> &containe
 	}
 }
 
+void check_footnotes_for_manual_paragraph_marks(vector<string> &articleFile, 
+	struct documentSectionsClass &documentSections){
+	
+	int pos1;
+	int pos2;
+	int y;
+	
+	string mergedFootnote;
+	string toInsert;
+	vector<int> toDelete;
+	
+	for(int i=articleFile.size()-1; i>documentSections.lineNrFootnotesBegin_; i--) {
+					
+		pos1 = articleFile[i].find("<p>");
+						
+		if(pos1 == 0){
+			search_replace(articleFile[i], "<p>", "");
+			mergedFootnote = mergedFootnote.insert(0, articleFile[i]);
 			
+			//In case that there are more than one paragraph: 
+			//Search until regular footnote is found and collect all parapgraphs...
+			
+			for(int y = i-1; y > documentSections.lineNrFootnotesBegin_; i--){
+				pos2 = articleFile[y].find("<li id=\"fn");
+				
+				if(pos2 == 0){
+					search_replace(articleFile[y], "</p>", " ");
+					toInsert = articleFile[y];
+					toInsert.pop_back();
+					
+					mergedFootnote = mergedFootnote.insert(0, toInsert);
+					toDelete.insert(toDelete.begin(), y);
+					break;
+				}
+				else{
+					search_replace(articleFile[y], "<p>", "");
+					search_replace(articleFile[y], "</p>", "");
+					toInsert = articleFile[y];
+					toInsert.pop_back();
+					
+					mergedFootnote = mergedFootnote.insert(0, toInsert);
+					toDelete.insert(toDelete.begin(), y);
+					y--;
+				}
+			}
+		
+		//Set marker in merged footnote:
+		search_replace(mergedFootnote, "doc-endnote\"><p>", 
+			"doc-endnote\"><p><span style=\"background-color:green;\">"
+			"CAUTION: Tool has merged footnote lines with manual line break. "
+			"Check the following: </span>");
+	
+		articleFile[i] = mergedFootnote;
+			
+		for (auto a : toDelete){
+			
+			articleFile.erase(articleFile.begin() + a );
+		}
+		mergedFootnote = "";
+		toDelete.clear();	
+		}
+ 	}
+}
+		
 void console_print(string consoleMessage){
 	
 	if(silentModeSelected==false){
@@ -181,7 +244,6 @@ void console_print(string consoleMessage){
 	}
 		
 }
-
 
 string create_replacement_string(string toReplace, string replaceValue){
 	
@@ -1145,8 +1207,8 @@ void insert_metadataTemplates(vector<string> &articleFile, fileInformations &fil
   
 }
 
-void insert_FootnoteTags(vector<string> &articleFile, vector<footNoteClass> &footnoteAddressContainer) {
-
+void insert_FootnoteTags(vector<string> &articleFile, vector<footNoteClass> &footnoteAddressContainer, struct documentSectionsClass &documentSections) {
+	
 	string footnoteBeginNew;
 	string referenceFootnoteBeginNEW;
 	string markerFootnoteSection;
@@ -1331,6 +1393,19 @@ int processParameters(vector<string> &parameterVector, fileInformations &fileInf
 			fileInfos.nameTempDirectory_ = parameterVector[i].substr(8);
 			callFromWebSelected=true;
 			silentModeSelected=true;
+			toDelete.push_back(i);
+		}
+		
+		pos = parameterVector[i].find("--fromPy");
+		if(pos>=0){
+			//extract temp folder name
+			string rawPath;
+			rawPath = parameterVector[i].substr(8);
+			search_replace(rawPath, "*%20*", " "); //"*%20*" was inserted by Python frame to replace whitespaces
+			fileInfos.nameProjectDirectory_ = rawPath;
+			cout << "fileInfos.nameProjectDirectory_: " << fileInfos.nameProjectDirectory_ << endl;
+			
+			callFromPythonSelected=true;
 			toDelete.push_back(i);
 		}
 		

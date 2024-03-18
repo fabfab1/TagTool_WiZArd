@@ -66,11 +66,14 @@ vector<string> articleFile{};
 	if(firstRun==true){
         				
 		fileInfos.fileNameArticleFile_ = fileInfos.fileNameSourceFile_;
-
+		
         if(callFromWebSelected==true){
 			fileInfos.set_tempPath();
 		}
 		
+		if(callFromPythonSelected==true){
+			fileInfos.set_projectPath();
+		}
 		articleFile=loadFileContent(fileInfos.fileNameArticleFile_);
             
         load_resources(fileInfos);
@@ -237,7 +240,13 @@ vector<string> articleFile{};
     //Convert footnotes to MS WORD or xml_____________________________________________________________
     if(footnoteTagsSet==false && documentSections.lineNrFootnotesBeginIsSet==true){
 		
-		insert_FootnoteTags(articleFile, footnoteAdressContainer);
+		//Make sure that footnote section doesn´t contain line breaks
+		check_footnotes_for_manual_paragraph_marks(articleFile, documentSections);
+		
+		//After alterating the file analyze again
+        analyze_articleFile(articleFile, containerTags, containerLines, documentSections, footnoteAdressContainer);
+		
+		insert_FootnoteTags(articleFile, footnoteAdressContainer, documentSections);
 	
         //After alterating the file analyze again
         analyze_articleFile(articleFile, containerTags, containerLines, documentSections, footnoteAdressContainer);
@@ -327,7 +336,7 @@ vector<string> articleFile{};
     
     write_resources(fileInfos);
     	
-
+	
     //Success report and resetting the tool for next run
 
     console_print("\n+ + + + + + + + + + + + + + + + + + + +");
